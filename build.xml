@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<project name="ImageProcessor" default="build-jar" basedir=".">
+
+   <property name="src.dir" value="src"/>
+   <property name="build.dir" value="build"/>  
+   <property name="dist.dir" value="dist"/> 
+   <property name = "lib.dir" value = "${src.dir}/lib"/>
+   <property name = "resources.dir" value = "${src.dir}/resources"/>
+
+   <target name="init">
+      <tstamp>
+         <format property="version.date" pattern="yyyy-MM-dd" locale="en"/>
+      </tstamp>
+      <mkdir dir="${build.dir}"/>
+      <mkdir dir="${dist.dir}"/>
+   </target>
+
+
+   <target name="compile" depends="init">
+      <javac srcdir="${src.dir}" destdir="${build.dir}" classpath=".:src/lib/DJNativeSwing-SWT.jar:src/lib/DJNativeSwing.jar:src/lib/swt.jar" debug="true" target="1.5">
+         <compilerarg value="-Xlint:unchecked"/>
+      </javac>
+   </target>
+
+   <target name="build-jar" depends="compile">
+      <jar destfile="${dist.dir}/ImageProcessor.jar" basedir="${build.dir}">
+         <manifest>
+            <attribute name="Build-By" value="SunDongliang"/>
+            <attribute name="Main-Class" value="com.sdl.ImageProcessor.Main"/>
+            <attribute name="Class-Path" value="lib/DJNativeSwing-SWT.jar lib/DJNativeSwing.jar lib/swt.jar"/>
+         </manifest>
+      </jar>
+      <copy todir="${dist.dir}/lib">
+         <fileset dir="${lib.dir}">
+         </fileset>
+      </copy>
+      <copy todir="${dist.dir}/resources">
+         <fileset dir="${resources.dir}">
+         </fileset>
+      </copy>
+   </target>
+
+   <target name="run" depends="build-jar">
+      <java dir="${dist.dir}"
+            jar="${dist.dir}/ImageProcessor.jar"
+            fork="true">
+            <arg value="-h"/>
+      </java>
+   </target>
+
+   <target name="clean">
+      <delete dir="${build.dir}"/>
+      <delete dir="${dist.dir}"/>
+   </target>
+</project>
